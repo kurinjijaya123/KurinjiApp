@@ -1,23 +1,29 @@
 name: Kurinji
-
 options:
+  bundleIdPrefix: com.kurinji
   deploymentTarget:
     iOS: "17.0"
-
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
 targets:
   Kurinji:
     type: application
     platform: iOS
-
     sources:
       - path: Sources
+    resources:
       - path: Resources/Assets.xcassets
       - path: Resources/inventory.db
-        buildPhase: resources
-
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.kurinji.inventory
-        SWIFT_VERSION: "5.0"
-        TARGETED_DEVICE_FAMILY: "1,2"
-        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_NAME: Kurinji
+        INFOPLIST_KEY_CFBundleDisplayName: Kurinji
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: NO
+        CODE_SIGN_STYLE: Automatic
+        OTHER_LDFLAGS: "$(inherited) -lsqlite3"
