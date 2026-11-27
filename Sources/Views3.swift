@@ -16,7 +16,7 @@ struct LedgerView: View {
                             Text("Bal " + rs(r.d("balance"))).bold().foregroundColor(r.d("balance") > 0 ? K.bad : K.ok) }.font(.system(size: 12))
                     } }
             }
-            .searchable(text: $s, prompt: "Filter by customer...").onChange(of: s) { _ in load() }
+            .searchable(text: $s, prompt: "Filter by customer...").onChange(of: s) { _, _ in load() }
             .toolbar { Button("+ Entry") { sheet = true }.buttonStyle(BtnStyle()) }
             .sheet(isPresented: $sheet) { LedgerForm { load() } }
         }.onAppear(perform: load)
@@ -57,7 +57,7 @@ struct ReportsView: View {
                 ForEach(rows.indices, id: \.self) { i in
                     VStack(alignment: .leading, spacing: 2) { ForEach(hd.indices, id: \.self) { j in HStack { Text(hd[j]).font(.caption).foregroundColor(K.sub); Spacer(); Text(rows[i][j]).font(.system(size: 13)) } } }.padding(.vertical, 2) }
             }
-        }.onAppear(perform: run).onChange(of: kind) { _ in run() }
+        }.onAppear(perform: run).onChange(of: kind) { _, _ in run() }
     }
     func run() {
         let f = ymd(from), t = ymd(to)
@@ -131,10 +131,10 @@ struct InvoiceView: View {
     }
     func box(_ t: String, _ r: [(String, String)]) -> some View {
         VStack(spacing: 0) { Text(t).font(.system(size: 9, weight: .bold)).foregroundColor(.white).frame(maxWidth: .infinity).padding(4).background(Color(hex: 0x1A2A4A))
-            ForEach(r.indices, id: \.self) { HStack { Text(r[$0].0); Spacer(); Text(r[$0].1).bold() }.font(.system(size: 9)).padding(4) } }.overlay(Rectangle().stroke(Color(hex: 0xC8D0E8)))
+            ForEach(r.indices, id: \.self) { i in HStack { Text(r[i].0); Spacer(); Text(r[i].1).bold() }.font(.system(size: 9)).padding(4) } }.overlay(Rectangle().stroke(Color(hex: 0xC8D0E8)))
     }
     func row(_ c: [String], head: Bool = false, alt: Bool = false) -> some View {
-        HStack { ForEach(c.indices, id: \.self) { Text(c[$0]).frame(maxWidth: $0 == 1 ? .infinity : 62, alignment: $0 < 2 ? .leading : .trailing) } }
+        HStack { ForEach(c.indices, id: \.self) { i in Text(c[i]).frame(maxWidth: i == 1 ? .infinity : 62, alignment: i < 2 ? .leading : .trailing) } }
             .font(.system(size: 9, weight: head ? .bold : .regular)).foregroundColor(head ? .white : Color(hex: 0x1A2A4A)).padding(5)
             .background(head ? Color(hex: 0x1A2A4A) : (alt ? Color(hex: 0xEEF4FF) : .white))
     }

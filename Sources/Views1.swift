@@ -110,7 +110,7 @@ struct DashboardView: View {
                             Text(s.1).font(.system(size: 18, weight: .bold)).foregroundColor(s.2) }
                             .padding(12).frame(maxWidth: .infinity, alignment: .leading).background(K.card).overlay(RoundedRectangle(cornerRadius: 12).stroke(s.2.opacity(0.2))).cornerRadius(12) }
                 }
-                Picker("", selection: $period) { ForEach(["Daily", "Weekly", "Monthly"], id: \.self) { Text($0) } }.pickerStyle(.segmented).onChange(of: period) { _ in load() }
+                Picker("", selection: $period) { ForEach(["Daily", "Weekly", "Monthly"], id: \.self) { Text($0) } }.pickerStyle(.segmented).onChange(of: period) { _, _ in load() }
                 chart("Sales Chart", sd, K.ok); chart("Purchase Chart", pd, K.pri)
                 Card { VStack(alignment: .leading, spacing: 6) {
                     Text("Recent Transactions").bold()
@@ -162,7 +162,7 @@ struct CrudView: View {
                             Text("\(f.label): " + (["cost", "price"].contains(f.key) ? rs(r.d(f.key)) : r.s(f.key))).font(.system(size: 12)).foregroundColor(K.sub) }
                     } }
                 .swipeActions { Button("Delete", role: .destructive) { db.run("DELETE FROM \(cfg.table) WHERE id=?", [r.i("id")]); load() } } } }
-            .searchable(text: $s).onChange(of: s) { _ in load() }
+            .searchable(text: $s).onChange(of: s) { _, _ in load() }
             .toolbar { Button("+ Add") { edit = nil; form = true }.buttonStyle(BtnStyle(color: K.ok)) }
             .sheet(isPresented: $form) { CrudForm(cfg: cfg, rec: edit) { load() } }
         }.onAppear(perform: load)

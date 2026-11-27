@@ -26,7 +26,7 @@ struct CartSheet: View {
             }
             Section("Add item") {
                 Picker("Product", selection: $pid) { Text("Select").tag(0); ForEach(products.indices, id: \.self) { Text(products[$0].s("name")).tag(products[$0].i("id")) } }
-                    .onChange(of: pid) { id in if let p = products.first(where: { $0.i("id") == id }) { price = String(kind == .purchase ? p.d("cost") : p.d("price")) } }
+                    .onChange(of: pid) { _, id in if let p = products.first(where: { $0.i("id") == id }) { price = String(kind == .purchase ? p.d("cost") : p.d("price")) } }
                 HStack { TextField("Qty", text: $qty).keyboardType(.decimalPad); TextField(kind == .purchase ? "Cost/unit" : "Price", text: $price).keyboardType(.decimalPad)
                     Button("+ Add", action: add).buttonStyle(BtnStyle()) }
                 if !msg.isEmpty { Text(msg).foregroundColor(K.bad).font(.caption) }
@@ -84,7 +84,7 @@ struct PurchaseView: View {
                     HStack { VStack(alignment: .leading) { Text(r.s("supplier").isEmpty ? "—" : r.s("supplier")).bold().foregroundColor(K.navy); Text(r.s("date") + (r.s("notes").isEmpty ? "" : " · " + r.s("notes"))).font(.caption).foregroundColor(K.sub) }
                         Spacer(); Text(rs(r.d("total"))).bold().foregroundColor(K.ok) } }
                 .swipeActions { Button("Delete", role: .destructive) { db.deletePurchase(r.i("id")); load() } } }
-            .searchable(text: $s, prompt: "Search by supplier...").onChange(of: s) { _ in load() }
+            .searchable(text: $s, prompt: "Search by supplier...").onChange(of: s) { _, _ in load() }
             .toolbar { Button("+ New") { edit = nil; sheet = true }.buttonStyle(BtnStyle(color: K.ok)) }
             .sheet(isPresented: $sheet) { CartSheet(kind: .purchase, rid: edit?.0 ?? 0, seed: edit?.1, seedItems: edit?.2 ?? []) { _ in load() } }
         }.onAppear(perform: load)
@@ -102,7 +102,7 @@ struct OrdersView: View {
         Screen(title: "Customer Orders") {
             List {
                 Section { HStack { Text("Pending: \(cnt("Pending"))").foregroundColor(K.warn); Text("Confirmed: \(cnt("Confirmed"))").foregroundColor(K.pri); Text("Delivered: \(cnt("Delivered"))").foregroundColor(K.ok) }.font(.system(size: 12, weight: .bold))
-                    Picker("Status", selection: $st) { ForEach(["All Status", "Pending", "Confirmed", "Delivered", "Cancelled"], id: \.self) { Text($0) } }.onChange(of: st) { _ in load() }
+                    Picker("Status", selection: $st) { ForEach(["All Status", "Pending", "Confirmed", "Delivered", "Cancelled"], id: \.self) { Text($0) } }.onChange(of: st) { _, _ in load() }
                     if !flash.isEmpty { Text(flash).font(.caption).foregroundColor(K.warn) } }
                 ForEach(rows.indices, id: \.self) { i in let r = rows[i]; let status = r.s("status"); let c = col[status] ?? K.sub
                     VStack(alignment: .leading, spacing: 6) {
@@ -119,7 +119,7 @@ struct OrdersView: View {
                         }.buttonStyle(.borderless)
                     }.padding(.vertical, 4) }
             }
-            .searchable(text: $s, prompt: "Customer or order no…").onChange(of: s) { _ in load() }
+            .searchable(text: $s, prompt: "Customer or order no…").onChange(of: s) { _, _ in load() }
             .toolbar { Button("+ New") { edit = nil; sheet = true }.buttonStyle(BtnStyle(color: K.ok)) }
             .sheet(isPresented: $sheet) { CartSheet(kind: .order, rid: edit?.0 ?? 0, seed: edit?.1, seedItems: edit?.2 ?? []) { _ in load() } }
             .navigationDestination(item: $inv) { InvoiceView(id: $0) }
@@ -149,7 +149,7 @@ struct SalesView: View {
                             if !bills { Text("Bal " + rs(r.d("balance"))).font(.caption).bold().foregroundColor(r.d("balance") > 0 ? K.bad : K.ok) } }
                         Text("\(r.s("date")) · Disc \(rs(r.d("discount")))").font(.caption).foregroundColor(K.sub)
                     } } }
-            .searchable(text: $s, prompt: "Search by customer...").onChange(of: s) { _ in load() }
+            .searchable(text: $s, prompt: "Search by customer...").onChange(of: s) { _, _ in load() }
             .toolbar { if !bills { Button("+ New Sale") { sheet = true }.buttonStyle(BtnStyle(color: K.ok)) } }
             .sheet(isPresented: $sheet) { CartSheet(kind: .sale) { id in inv = id; load() } }
             .navigationDestination(item: $inv) { InvoiceView(id: $0) }
